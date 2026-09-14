@@ -9,9 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
-# ============================================================
-# 1. Настройки
-# ============================================================
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 batch_size = 128
 num_epochs = 25
@@ -23,9 +21,7 @@ stl10_classes = [
     "dog", "horse", "monkey", "ship", "truck"
 ]
 
-# ============================================================
-# 2. Трансформации и загрузка STL-10
-# ============================================================
+
 train_transform = transforms.Compose([
     transforms.RandomCrop(96, padding=4),
     transforms.RandomHorizontalFlip(),
@@ -54,15 +50,13 @@ test_dataset = torchvision.datasets.STL10(
     transform=test_transform
 )
 
-# ВАЖНО ДЛЯ WINDOWS → num_workers=0
+
 train_loader = DataLoader(train_dataset, batch_size=batch_size,
                           shuffle=True, num_workers=0)
 test_loader = DataLoader(test_dataset, batch_size=batch_size,
                          shuffle=False, num_workers=0)
 
-# ============================================================
-# 3. Модель CNN
-# ============================================================
+
 class SimpleSTL10CNN(nn.Module):
     def __init__(self):
         super(SimpleSTL10CNN, self).__init__()
@@ -102,15 +96,11 @@ class SimpleSTL10CNN(nn.Module):
 
 model = SimpleSTL10CNN().to(device)
 
-# ============================================================
-# 4. Критерий и оптимизатор
-# ============================================================
+
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adadelta(model.parameters(), lr=lr)
 
-# ============================================================
-# 5. Функция оценки
-# ============================================================
+
 def evaluate():
     model.eval()
     total = 0
@@ -134,9 +124,7 @@ def evaluate():
     return loss_sum / total, 100 * correct / total
 
 
-# ============================================================
-# 6. Обучение
-# ============================================================
+
 train_losses = []
 test_losses = []
 test_accs = []
@@ -169,9 +157,7 @@ for epoch in range(num_epochs):
           f"Test Loss: {test_loss:.4f} | "
           f"Test Acc: {test_acc:.2f}%")
 
-# ============================================================
-# 7. Графики
-# ============================================================
+
 plt.figure(figsize=(10, 4))
 
 plt.subplot(1, 2, 1)
@@ -187,9 +173,7 @@ plt.title("Accuracy")
 
 plt.show()
 
-# ============================================================
-# 8. Визуализация предсказания
-# ============================================================
+
 def denormalize(img):
     mean = np.array([0.4469, 0.4399, 0.4066])
     std = np.array([0.2603, 0.2566, 0.2713])
